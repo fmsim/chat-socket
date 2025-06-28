@@ -1,16 +1,30 @@
 // socket client
 const socket = io();
 
-socket.on("welcome", (msg) => {
-  console.log(msg);
+const userEl = document.getElementById("user");
+const textEl = document.getElementById("text");
+const chatBoxEl = document.getElementById("chat-box");
+
+// listen on server send message
+socket.on("send message", (msg) => {
+  const pEl = document.createElement("p");
+  pEl.textContent = `${msg.username}: ${msg.message}`;
+
+  chatBoxEl.appendChild(pEl);
+  textEl.value = "";
 });
 
-socket.on("update", (msg, cb) => {
-  const { item1, item2, item3 } = msg;
+socket.on("new user", (msg) => {
+  const pEl = document.createElement("p");
+  pEl.textContent = msg;
 
-  if (true) {
-    cb("Hello");
-  }
+  chatBoxEl.appendChild(pEl);
 });
 
-socket.emit("client message", "Message from client");
+// send to server
+function sendMessage() {
+  socket.emit("send message", {
+    username: userEl.value,
+    message: textEl.value,
+  });
+}
