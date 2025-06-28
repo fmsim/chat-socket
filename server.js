@@ -15,6 +15,18 @@ io.on("connection", (socket) => {
   // event based api - send to client
   socket.emit("welcome", `Hi ${socket.id}`);
 
+  socket.emit(
+    "update",
+    {
+      item1: "product 1",
+      item2: "product 2",
+      item3: "product 3",
+    },
+    (msg) => {
+      console.log(msg);
+    }
+  );
+
   // event based api - receive from client
   socket.on("client message", (msg) => {
     console.log(msg);
