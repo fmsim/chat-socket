@@ -4,6 +4,8 @@ const socket = io();
 const userEl = document.getElementById("user");
 const textEl = document.getElementById("text");
 const chatBoxEl = document.getElementById("chat-box");
+const roomNameEl = document.getElementById("room-name");
+const roomEl = document.getElementById("room");
 
 // listen on server send message
 socket.on("send message", (msg) => {
@@ -14,7 +16,17 @@ socket.on("send message", (msg) => {
   textEl.value = "";
 });
 
-socket.on("new user", (msg) => {
+socket.on("send room message", (msg) => {
+  const pEl = document.createElement("p");
+  pEl.textContent = `${msg.username}: ${msg.message}`;
+
+  chatBoxEl.appendChild(pEl);
+  textEl.value = "";
+});
+
+socket.on("join room success", (msg, roomName) => {
+  roomEl.textContent = roomName;
+
   const pEl = document.createElement("p");
   pEl.textContent = msg;
 
@@ -23,8 +35,22 @@ socket.on("new user", (msg) => {
 
 // send to server
 function sendMessage() {
-  socket.emit("send message", {
-    username: userEl.value,
-    message: textEl.value,
-  });
+  // 1) check if we have joined a room
+  if (roomEl.textContent) {
+    socket.emit("send room message", {
+      username: userEl.value,
+      message: textEl.value,
+      room: roomEl.textContent,
+    });
+  } else {
+    // global chat
+    socket.emit("send message", {
+      username: userEl.value,
+      message: textEl.value,
+    });
+  }
+}
+
+function joinRoom() {
+  socket.emit("join room request", roomNameEl.value);
 }

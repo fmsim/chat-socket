@@ -12,16 +12,23 @@ const io = new Server(server);
 io.on("connection", (socket) => {
   console.log("Client connected", socket.id);
 
-  // send message to all clients except myself
-  socket.broadcast.emit(
-    "new user",
-    "A new user has been joined to the application"
-  );
-
   //  listen on client send message
   socket.on("send message", (msg) => {
     // send message to all clients
     io.emit("send message", msg);
+  });
+
+  socket.on("send room message", (msg) => {
+    io.to(msg.room).emit("send room message", msg);
+  });
+
+  socket.on("join room request", (roomName) => {
+    socket.join(roomName);
+    socket.emit(
+      "join room success",
+      `you have been joined a room: ${roomName}`,
+      roomName
+    );
   });
 });
 
