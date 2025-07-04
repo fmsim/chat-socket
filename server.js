@@ -19,8 +19,28 @@ adminIo.on("connection", (socket) => {
   adminIo.emit("greeting", "Welcome to admin channel");
 });
 
+const users = [];
+
 io.on("connection", (socket) => {
   console.log("Client connected", socket.id);
+
+  socket.on("new user", (userName) => {
+    users.push({ id: socket.id, userName });
+
+    // emit event to all users
+    io.emit(
+      "users online",
+      users.map((u) => u.userName)
+    );
+
+    socket.on("disconnect", () => {
+      // remove user
+      const index = users.findIndex((u) => u.id === socket.id);
+      if (index !== -1) {
+        users.splice(index, 1);
+      }
+    });
+  });
 
   //  listen on client send message
   socket.on("send message", (msg) => {

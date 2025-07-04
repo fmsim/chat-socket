@@ -1,15 +1,29 @@
 // socket client
 const socket = io(); // default
 const adminSocket = io("/admin");
+adminSocket.on("greeting", (msg) => {
+  console.log(msg);
+});
 
-const userEl = document.getElementById("user");
 const textEl = document.getElementById("text");
 const chatBoxEl = document.getElementById("chat-box");
 const roomNameEl = document.getElementById("room-name");
 const roomEl = document.getElementById("room");
+const usersOnlineEl = document.getElementById("users-online");
 
-adminSocket.on("greeting", (msg) => {
-  console.log(msg);
+const userName = prompt("Enter your name");
+socket.emit("new user", userName);
+socket.on("users online", (users) => {
+  console.log(users);
+
+  usersOnlineEl.textContent = "";
+
+  users.forEach((user) => {
+    const liEl = document.createElement("li");
+    liEl.textContent = user;
+
+    usersOnlineEl.appendChild(liEl);
+  });
 });
 
 // listen on server send message
@@ -43,14 +57,14 @@ function sendMessage() {
   // 1) check if we have joined a room
   if (roomEl.textContent) {
     socket.emit("send room message", {
-      username: userEl.value,
+      username: userName,
       message: textEl.value,
       room: roomEl.textContent,
     });
   } else {
     // global chat
     socket.emit("send message", {
-      username: userEl.value,
+      username: userName,
       message: textEl.value,
     });
   }

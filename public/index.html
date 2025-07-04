@@ -7,6 +7,7 @@
   <body>
     <h1>Chat App</h1>
     <h2 id="room"></h2>
+    <ul id="users-online"></ul>
     <div
       id="chat-box"
       style="border: 1px solid #ccc; height: 300px; overflow-y: auto"
@@ -15,7 +16,6 @@
       <input id="room-name" type="text" placeholder="Enter your room" />
       <button onClick="joinRoom()">Join a room</button>
     </div>
-    <input id="user" placeholder="Your name" />
     <input id="text" placeholder="Message" />
     <button onclick="sendMessage()">Send</button>
 
