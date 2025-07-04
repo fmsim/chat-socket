@@ -1,11 +1,16 @@
 // socket client
-const socket = io();
+const socket = io(); // default
+const adminSocket = io("/admin");
 
 const userEl = document.getElementById("user");
 const textEl = document.getElementById("text");
 const chatBoxEl = document.getElementById("chat-box");
 const roomNameEl = document.getElementById("room-name");
 const roomEl = document.getElementById("room");
+
+adminSocket.on("greeting", (msg) => {
+  console.log(msg);
+});
 
 // listen on server send message
 socket.on("send message", (msg) => {

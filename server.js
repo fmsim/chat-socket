@@ -8,7 +8,17 @@ const app = express();
 const server = http.createServer(app);
 const PORT = 3000;
 
+// default namespace
 const io = new Server(server);
+
+const adminIo = io.of("/admin");
+
+adminIo.on("connection", (socket) => {
+  console.log("Client connected to admin namespace", socket.id);
+
+  adminIo.emit("greeting", "Welcome to admin channel");
+});
+
 io.on("connection", (socket) => {
   console.log("Client connected", socket.id);
 
